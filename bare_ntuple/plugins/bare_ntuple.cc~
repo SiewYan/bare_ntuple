@@ -26,20 +26,30 @@
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/Framework/interface/ESHandle.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include <DataFormats/VertexReco/interface/VertexFwd.h>
+
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
+#include "JetMETCorrections/Objects/interface/JetCorrector.h"
+#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/Utilities/interface/InputTag.h"
-#include "TH1D.h"
+//#include "TH1D.h"
+#include "TTree.h"
+#include "TNtuple.h"
 
-//
+
+
+#define MAXVTX 200
+
 // class declaration
-//
 
 class bare_ntuple : public edm::EDAnalyzer {
    public:
@@ -60,9 +70,15 @@ class bare_ntuple : public edm::EDAnalyzer {
       //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
       // ----------member data ---------------------------
-  edm::InputTag pfj_;
+  edm::InputTag pfj_;//PFJetCorToken_;
 
-  TH1D *jetpt;
+  TTree *mtree;
+  
+  unsigned int mrun;
+  unsigned int mlumi;
+  unsigned int mevent;
+  unsigned int mnvtx;
+  unsigned int mnjets;
 };
 
 //
@@ -76,15 +92,18 @@ class bare_ntuple : public edm::EDAnalyzer {
 //
 // constructors and destructor
 //
-bare_ntuple::bare_ntuple(const edm::ParameterSet& iConfig):
-  pfj_(iConfig.getUntrackedParameter<edm::InputTag>("pfj"))
+bare_ntuple::bare_ntuple(const edm::ParameterSet& iConfig)
 
 {
    //now do what ever initialization is needed
 
   edm::Service<TFileService> fs;
 
-  jetpt      = fs->make<TH1D>( "jetpt" , " AK5PFJETS_CHS " , 100 , 0. , 1000. );
+  pfj_ = iConfig.getUntrackedParameter<edm::InputTag>("pfj");
+  //PFJetCorToken_ = iConfig.getParameter<edm::InputTag>("PFJetCorLabel");
+
+  mtree = fs->make<TTree>( "ntuple" , " monojet_input " );
+
 
 }
 
@@ -109,18 +128,68 @@ bare_ntuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    using namespace edm;
    using namespace reco;
 
+   mrun   = iEvent.id().run();
+   mlumi  = iEvent.luminosityBlock();
+   mevent = iEvent.id().event();
+
+   ////////////////Vertex////////////////
+   reco::Vertex primaryvtx;
+   Handle<reco::VertexCollection> recVtxs;
+   iEvent.getByLabel("offlinePrimaryVertices",recVtxs);
+   int  pvind=0;
+   for(unsigned int ind=0;ind<recVtxs->size();ind++){
+     if(!((*recVtxs)[ind].isFake())){
+       //mPVx[pvind]      = (*recVtxs)[ind].x();
+       //mPVy[pvind]      = (*recVtxs)[ind].y();
+       //mPVz[pvind]      = (*recVtxs)[ind].z();
+       //mPVchi2[pvind]   = (*recVtxs)[ind].chi2();
+       //mPVndof[pvind]   = (*recVtxs)[ind].ndof();
+       //mPVntracks[pvind]= (*recVtxs)[ind].tracksSize();
+       if(pvind == 0) primaryvtx = (*recVtxs)[ind];
+       pvind++;
+       if(pvind>=MAXVTX) break;
+     }
+   }
+   mnvtx = pvind;
+
+   /////////////////RecoJet/////////////////////
+   unsigned int count=0;
    Handle<PFJetCollection> pfjetH;
    iEvent.getByLabel("ak4PFJetsCHS", pfjetH);
    for ( PFJetCollection::const_iterator jet = pfjetH->begin(); jet != pfjetH->end(); ++jet ) {
-     double jetpt = jet->pt();
+     //jetpt->Fill(jet->pt());
+     count++;
    }
-}
+   mnjets = count;
+ 
+   /////////// ak4pfchs L1L2L3 corrected jets //////////////
+   /*
+   Handle<reco::PFJetCollection> pfjetL1L2L3chscoll;
+   iEvent.getByLabel(PFJetCorToken_, pfjetL1L2L3chscoll);
+   const reco::PFJetCollection *pfchsL1L2L3jets = pfjetL1L2L3chscoll.product();
+   reco::PFJetCollection::const_iterator pfjetL1L2L3chsclus = pfchsL1L2L3jets->begin();
 
+   unsigned int nPFCHSL1L2L3Jet=0;
+   for(pfjetL1L2L3chsclus = pfchsL1L2L3jets->begin(); pfjetL1L2L3chsclus!= pfchsL1L2L3jets->end(); ++pfjetL1L2L3chsclus){
+     nPFCHSL1L2L3Jet++;
+   } 
+   mnjets = nPFCHSL1L2L3Jet;
+
+   */
+   mtree->Fill();
+}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
 bare_ntuple::beginJob()
 {
+
+  mtree->Branch( "run" , &mrun ,"run/I" );
+  mtree->Branch( "lumi" , &mlumi , "lumi/I" );
+  mtree->Branch( "event" , &mevent , "event/I" );
+  mtree->Branch( "nvtx" , &mnvtx , "nvtx/I" );
+  mtree->Branch( "njets" , &mnjets , "njets/I" );
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

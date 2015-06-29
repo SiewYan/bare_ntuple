@@ -2,7 +2,10 @@
 <use name="FWCore/PluginManager"/>
 <use name="FWCore/ParameterSet"/>
 
+<use name="DataFormats/VertexReco"/>
 <use name="DataFormats/JetReco"/>
+<use name="JetMETCorrections/Objects"/>
+<use name="DataFormats/ParticleFlowCandidate"/>
 
 <use   name="CommonTools/UtilAlgos"/>
 <use   name="FWCore/ServiceRegistry"/>
