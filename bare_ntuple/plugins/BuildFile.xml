@@ -5,10 +5,13 @@
 <use name="DataFormats/VertexReco"/>
 <use name="DataFormats/JetReco"/>
 
+<use name="DataFormats/HepMCCandidate"/>
+<use name="DataFormats/ParticleFlowCandidate"/>
+<use name="JetMETCorrections/Objects"/>
+
 <use   name="CommonTools/UtilAlgos"/>
 <use   name="FWCore/ServiceRegistry"/>
 <use   name="clhep"/>
-<use   name="rootcintex" />
 <use   name="root"/>
 <use   name="PhysicsTools/PatUtils"/>
 <use   name="PhysicsTools/UtilAlgos"/>
