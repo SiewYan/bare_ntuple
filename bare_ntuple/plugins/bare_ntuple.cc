@@ -35,14 +35,14 @@
 
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
-#include "JetMETCorrections/Objects/interface/JetCorrector.h"
-#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
+//#include "JetMETCorrections/Objects/interface/JetCorrector.h"
+//#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 //#include "TH1D.h"
-#include "TTree.h"
+//#include "TTree.h"
 #include "TNtuple.h"
 
 
@@ -98,8 +98,6 @@ bare_ntuple::bare_ntuple(const edm::ParameterSet& iConfig):
    //now do what ever initialization is needed
 
   edm::Service<TFileService> fs;
-
-  //PFJetCorToken_ = iConfig.getParameter<edm::InputTag>("PFJetCorLabel");
 
   mtree = fs->make<TTree>( "ntuple" , " monojet_input " );
 
@@ -161,20 +159,6 @@ bare_ntuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    }
    mnjets = count;
  
-   /////////// ak4pfchs L1L2L3 corrected jets //////////////
-   /*
-   Handle<reco::PFJetCollection> pfjetL1L2L3chscoll;
-   iEvent.getByLabel(PFJetCorToken_, pfjetL1L2L3chscoll);
-   const reco::PFJetCollection *pfchsL1L2L3jets = pfjetL1L2L3chscoll.product();
-   reco::PFJetCollection::const_iterator pfjetL1L2L3chsclus = pfchsL1L2L3jets->begin();
-
-   unsigned int nPFCHSL1L2L3Jet=0;
-   for(pfjetL1L2L3chsclus = pfchsL1L2L3jets->begin(); pfjetL1L2L3chsclus!= pfchsL1L2L3jets->end(); ++pfjetL1L2L3chsclus){
-     nPFCHSL1L2L3Jet++;
-   } 
-   mnjets = nPFCHSL1L2L3Jet;
-
-   */
    mtree->Fill();
 }
 

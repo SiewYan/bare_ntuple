@@ -12,9 +12,8 @@ process.option = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         #'file:myfile.root' if it is local
-        #'/store/mc/Phys14DR/ZJetsToNuNu_HT-100to200_Tune4C_13TeV-madgraph-tauola/AODSIM/PU20bx25_PHYS14_25_V1-v1/00000/02FBEDF5-8373-E411-AEC8-E0CB4E553665.root'
+        '/store/mc/Phys14DR/ZJetsToNuNu_HT-100to200_Tune4C_13TeV-madgraph-tauola/AODSIM/PU20bx25_PHYS14_25_V1-v1/00000/02FBEDF5-8373-E411-AEC8-E0CB4E553665.root'
 #'file:/afs/cern.ch/user/s/shoh/eos/cms/store/relval/CMSSW_7_4_1/RelValADDMonoJet_d3MD3_13/MINIAODSIM/MCRUN2_74_V9_gensim71X-v1/00000/80CF5456-B9EC-E411-93DA-002618FDA248.root'
-'/store/mc/Phys14DR/ZJetsToNuNu_HT-100to200_Tune4C_13TeV-madgraph-tauola/AODSIM/PU20bx25_PHYS14_25_V1-v1/00000/02FBEDF5-8373-E411-AEC8-E0CB4E553665.root'
     )
 )
 
@@ -24,4 +23,5 @@ process.bare = cms.EDAnalyzer('bare_ntuple',
 )
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string('bare_ntuple.root') )
-path = cms.Path(process.bare)
+
+process.p = cms.Path(process.bare)
