@@ -26,11 +26,9 @@ process.load("RecoJets.Configuration.RecoJets_EventContent_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-         #'root://cmsxrootd.fnal.gov//store/mc/TP2023SHCALDR/QCD_Pt-15to3000_Tune4C_14TeV_pythia8/GEN-SIM-RECO/SHCALJan23_NoPU_PH2_1K_FB_V6-v1/00000/001FF988-5CA3-E411-BE7A-00261894388A.root'          
-#'/store/mc/Phys14DR/ZJetsToNuNu_HT-100to200_Tune4C_13TeV-madgraph-tauola/AODSIM/PU20bx25_PHYS14_25_V1-v1/00000/02FBEDF5-8373-E411-AEC8-E0CB4E553665.root'
+'file:/afs/cern.ch/user/s/shoh/eos/cms/store/relval/CMSSW_7_4_1/RelValADDMonoJet_d3MD3_13/MINIAODSIM/MCRUN2_74_V9_gensim71X-v1/00000/80CF5456-B9EC-E411-93DA-002618FDA248.root'
     )
 )
-
 
 
 from RecoJets.Configuration.GenJetParticles_cff import *
@@ -56,3 +54,4 @@ setattr(process,'demoAK4Sequence',sequence)
 path = cms.Path( sequence )
 setattr(process,'demoAK4Path',path)
 
+process.p= cms.Path( process.demo )
