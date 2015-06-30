@@ -4,7 +4,7 @@ process = cms.Process("BARE")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.option = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
@@ -16,13 +16,15 @@ process.source = cms.Source("PoolSource",
 )
 
 process.bare = cms.EDAnalyzer('bare_ntuple',
-                              pfj = cms.untracked.InputTag('ak4PFJetsCHS')
+                              pfj = cms.untracked.InputTag('slimmedJets')
 )
 
 process.dump=cms.EDAnalyzer('EventContentAnalyzer')
 
 process.TFileService = cms.Service("TFileService", fileName = cms.string('bare_ntuple.root') )
 
-#process.p = cms.Path(process.bare)
+process.p = cms.Path(process.bare)
 
-process.p=cms.Path(process.bare*process.dump)
+#process.p=cms.Path(process.bare*process.dump)
+
+#process.p=cms.Path(process.dump)

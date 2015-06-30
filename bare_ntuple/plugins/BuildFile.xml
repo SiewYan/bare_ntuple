@@ -8,6 +8,7 @@
 <use name="DataFormats/HepMCCandidate"/>
 <use name="DataFormats/ParticleFlowCandidate"/>
 <use name="JetMETCorrections/Objects"/>
+<use name="DataFormats/PatCandidates"/>
 
 <use   name="CommonTools/UtilAlgos"/>
 <use   name="FWCore/ServiceRegistry"/>

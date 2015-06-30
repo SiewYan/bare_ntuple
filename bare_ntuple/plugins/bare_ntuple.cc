@@ -35,6 +35,13 @@
 
 #include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/JetReco/interface/PFJetCollection.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Tau.h"
+
 //#include "JetMETCorrections/Objects/interface/JetCorrector.h"
 //#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 
@@ -123,7 +130,7 @@ void
 bare_ntuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
-   using namespace reco;
+   //using namespace reco;
 
    mrun   = iEvent.id().run();
    mlumi  = iEvent.luminosityBlock();
@@ -132,7 +139,7 @@ bare_ntuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    ////////////////Vertex////////////////
    reco::Vertex primaryvtx;
    Handle<reco::VertexCollection> recVtxs;
-   iEvent.getByLabel("offlinePrimaryVertices",recVtxs);
+   iEvent.getByLabel("offlineSlimmedPrimaryVertices",recVtxs);
    int  pvind=0;
    for(unsigned int ind=0;ind<recVtxs->size();ind++){
      if(!((*recVtxs)[ind].isFake())){
@@ -151,9 +158,10 @@ bare_ntuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    /////////////////RecoJet/////////////////////
    unsigned int count=0;
-   Handle<PFJetCollection> pfjetH;
-   iEvent.getByLabel("ak4PFJetsCHS", pfjetH);
-   for ( PFJetCollection::const_iterator jet = pfjetH->begin(); jet != pfjetH->end(); ++jet ) {
+   Handle<pat::JetCollection> pfjetH;
+   //ak4PFJetsCHS
+   iEvent.getByLabel(pfj_, pfjetH);
+   for ( pat::JetCollection::const_iterator jet = pfjetH->begin(); jet != pfjetH->end(); ++jet ) {
      //jetpt->Fill(jet->pt());
      count++;
    }
